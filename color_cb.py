@@ -108,15 +108,28 @@ def main():
     # start the correct mode
 
     color_dict = country_color_dict(my_path)
-    country_list = color_dict.keys()
     tag_dict = name_to_tag_dict(file_path)
+
+    # read mod folders
+    mod_folders = os.listdir(os.path.abspath(os.getcwd()) + '\\mod')
+    for x in mod_folders:
+        if os.path.isdir(os.path.abspath(os.getcwd()) + '\\mod' + '\\' + x):
+            common_folder = os.path.join(os.path.abspath(os.getcwd()) + '\\mod' + '\\' + x, my_path)
+            country_file = os.listdir(os.path.abspath(os.getcwd()) + '\\mod' + '\\' + x + r'\common\country_tags')[0]
+            countries_tags = os.path.join(os.path.abspath(os.getcwd()) + '\\mod' + '\\' + x + r'\common\country_tags',
+                                          country_file)
+            color_dict = {**color_dict, **country_color_dict(common_folder)}
+            tag_dict = {**tag_dict, **name_to_tag_dict(countries_tags)}
+    country_list = color_dict.keys()
     all_pairs = list(itertools.combinations(country_list, 2))
     # create a list of all possible country matches thanks itertools
 
     cb_dict = {}
     failures = 0
     matches = 0
-    fail_list = ['Biapis', 'Limbdi', 'Morang', 'Nsenga']  # Cmon Paradox
+    fail_list = ['Biapis', 'Limbdi', 'Morang', 'Nsenga']  # No Tag in file
+    fail_list += ['BritishWestAfrica', 'BritishIndia', 'BritishSouthAfrica', 'BritishWestAfrica', 'BritishSouthAfrica',
+                  'BritishEastIndies', 'BritishPhilippines'] #No Tag in file
     for pair in all_pairs:
         if color_calculation(color_dict[pair[0]], color_dict[pair[1]], mode=mode) < distance:
             try:
@@ -128,7 +141,7 @@ def main():
             except KeyError:
                 failures += 1
                 if pair[0] not in fail_list and pair[1] not in fail_list:
-                    print(pair[0], pair[1])
+                    print('Failed to match the follwowing pairs', pair[0], pair[1])
 
     # write the file here
     with open('color_cb.csv', 'w+') as outfile:
@@ -136,7 +149,7 @@ def main():
             outfile.write(key + ',' + ','.join(cb_dict[key]) + '\n')
 
     # report out
-    print("3202 failures expected at max distance. {} failures caught. ".format(failures))
+    print("21 failures expected at max distance. {} failures caught. ".format(failures + len(fail_list)))
     print("{} countries would gain CBs based upon their color similaritiy".format(len(set(cb_dict.keys()))))
     print("{} cbs were given out".format(matches))
     print('File written to {}.color_cb.csv'.format(os.path.abspath(os.getcwd()), 'color_cb.csv'))
