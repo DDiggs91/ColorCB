@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import itertools
 import os
 import re
