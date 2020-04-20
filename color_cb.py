@@ -139,7 +139,7 @@ def main():
     print("3202 failures expected at max distance. {} failures caught. ".format(failures))
     print("{} countries would gain CBs based upon their color similaritiy".format(len(set(cb_dict.keys()))))
     print("{} cbs were given out".format(matches))
-    print('File written to {}.color_cb.csv'.format(os.path.abspath(os.getcwd()), 'color_cb.csv'))
+    print('File written to {}\color_cb.csv'.format(os.path.abspath(os.getcwd()), 'color_cb.csv'))
 
 
 if __name__ == '__main__':
